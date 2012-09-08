@@ -1,8 +1,9 @@
-require 'pp'
 require 'rest-client'
 
 module Datomic
   class Client
+    VERSION = '0.1.0'
+
     def initialize(url, storage)
       @url = url
       @storage = storage
@@ -31,5 +32,4 @@ module Datomic
       "#{@url}/db/#{@storage}"
     end
   end
-
 end
