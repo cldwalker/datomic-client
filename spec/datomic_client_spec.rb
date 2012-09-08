@@ -59,7 +59,7 @@ describe Datomic::Client do
 
     it "raises 500 error for invalid index" do
        expect { client.datoms('test-datoms', 'blarg') }.
-         to raise_error(RestClient::InternalServerError, /500/)
+         to raise_error(RestClient::InternalServerError, /500 Internal Server Error/)
     end
 
     it "returns correct response when using limit param" do
@@ -69,4 +69,18 @@ describe Datomic::Client do
     end
   end
 
+  describe "#range" do
+    before { client.create_database('test-range') }
+
+    it "returns 200 with required attribute" do
+      pending "til I figure out a correct attribute value"
+      resp = client.range('test-range', :a => 0)
+      resp.code.should == 200
+    end
+
+    it "raises 400 without required attribute" do
+      expect { client.range('test-range') }.
+        to raise_error(RestClient::BadRequest, /400 Bad Request/)
+    end
+  end
 end

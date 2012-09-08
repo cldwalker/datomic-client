@@ -21,6 +21,10 @@ module Datomic
       RestClient.get "#{db_url(dbname)}/datoms/#{index}", :params => params
     end
 
+    def range(dbname, params = {})
+      RestClient.get db_url(dbname) + '/range', :params => params
+    end
+
     private
 
     def db_url(dbname)
