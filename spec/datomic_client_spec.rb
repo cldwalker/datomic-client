@@ -62,7 +62,7 @@ describe Datomic::Client do
          to raise_error(RestClient::InternalServerError, /500 Internal Server Error/)
     end
 
-    it "returns correct response when using limit param" do
+    it "returns correct response with limit param" do
       resp = client.datoms('test-datoms', "eavt", :limit => 0)
       resp.code.should == 200
       resp.body.should == "[]"
@@ -81,6 +81,22 @@ describe Datomic::Client do
     it "raises 400 without required attribute" do
       expect { client.range('test-range') }.
         to raise_error(RestClient::BadRequest, /400 Bad Request/)
+    end
+  end
+
+  describe "#entity" do
+    before { client.create_database('test-entity') }
+
+    it "returns correct response" do
+      resp = client.entity('test-entity', 1)
+      resp.code.should == 200
+      resp.body.should match(/^\{.*\}$/)
+    end
+
+    it "returns correct response with valid param" do
+      resp = client.entity('test-entity', 1, :since => 0)
+      resp.code.should == 200
+      resp.body.should match(/^\{.*\}$/)
     end
   end
 end

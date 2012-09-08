@@ -25,6 +25,10 @@ module Datomic
       RestClient.get db_url(dbname, 'range'), :params => params
     end
 
+    def entity(dbname, id, params = {})
+      RestClient.get db_url(dbname, 'entity', id), :params => params
+    end
+
     private
 
     def db_url(dbname, *parts)
