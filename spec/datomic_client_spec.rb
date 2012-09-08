@@ -57,8 +57,15 @@ describe Datomic::Client do
       end
     end
 
-    it "raises ArgumentError for invalid index" do
-      expect { client.datoms('test-datoms', 'blarg') }.to raise_error(ArgumentError)
+    it "raises 500 error for invalid index" do
+       expect { client.datoms('test-datoms', 'blarg') }.
+         to raise_error(RestClient::InternalServerError, /500/)
+    end
+
+    it "returns correct response when using limit param" do
+      resp = client.datoms('test-datoms', "eavt", :limit => 0)
+      resp.code.should == 200
+      resp.body.should == "[]"
     end
   end
 

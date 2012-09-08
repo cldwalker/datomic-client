@@ -17,9 +17,8 @@ module Datomic
       RestClient.get db_url(dbname)
     end
 
-    def datoms(dbname, index)
-      raise ArgumentError if !%w{eavt aevt avet vaet}.include?(index)
-      RestClient.get "#{db_url(dbname)}/datoms/#{index}"
+    def datoms(dbname, index, params = {})
+      RestClient.get "#{db_url(dbname)}/datoms/#{index}", :params => params
     end
 
     private
