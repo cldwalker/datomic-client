@@ -23,7 +23,7 @@ describe Datomic::Client do
   end
 
   describe "#database_info" do
-    before { client.create_database('test123') }
+    before { client.create_database('test-database_info') }
 
     it "returns 200 for existing database" do
       resp = client.database_info('test123')
@@ -44,4 +44,22 @@ describe Datomic::Client do
       resp.code.should == 404
     end
   end
+
+  describe "#datoms" do
+    before { client.create_database('test-datoms') }
+
+    %w{eavt aevt avet vaet}.each do |index|
+      it "returns correct response for index '#{index}'" do
+        pending if index == 'vaet'
+        resp = client.datoms('test-datoms', index)
+        resp.code.should == 200
+        resp.body.should match(/^\[.*\]$/)
+      end
+    end
+
+    it "raises ArgumentError for invalid index" do
+      expect { client.datoms('test-datoms', 'blarg') }.to raise_error(ArgumentError)
+    end
+  end
+
 end

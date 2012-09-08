@@ -10,21 +10,21 @@ module Datomic
     end
 
     def create_database(dbname)
-      RestClient.put db(dbname), {}
+      RestClient.put db_url(dbname), {}
     end
 
     def database_info(dbname)
-      RestClient.get db(dbname)
+      RestClient.get db_url(dbname)
     end
 
     def datoms(dbname, index)
       raise ArgumentError if !%w{eavt aevt avet vaet}.include?(index)
-      RestClient.get "#{db(dbname)}/datoms/#{index}"
+      RestClient.get "#{db_url(dbname)}/datoms/#{index}"
     end
 
     private
 
-    def db(dbname)
+    def db_url(dbname)
       full_storage_url + "/#{dbname}"
     end
 
