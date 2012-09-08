@@ -18,21 +18,17 @@ module Datomic
     end
 
     def datoms(dbname, index, params = {})
-      RestClient.get "#{db_url(dbname)}/datoms/#{index}", :params => params
+      RestClient.get db_url(dbname, "datoms/#{index}"), :params => params
     end
 
     def range(dbname, params = {})
-      RestClient.get db_url(dbname) + '/range', :params => params
+      RestClient.get db_url(dbname, 'range'), :params => params
     end
 
     private
 
-    def db_url(dbname)
-      full_storage_url + "/#{dbname}"
-    end
-
-    def full_storage_url
-      "#{@url}/db/#{@storage}"
+    def db_url(dbname, *parts)
+      [@url, 'db', @storage, dbname].concat(parts).join('/')
     end
   end
 end
