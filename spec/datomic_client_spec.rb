@@ -41,8 +41,8 @@ describe Datomic::Client do
       resp.body.should include(':db/alias')
     end
 
-    # returning 500 which rest-client throws as an error, awesome
-    pending "returns 404 for nonexistent database" do
+    it "returns 404 for nonexistent database" do
+      pending "docs say 404 but seeing 500"
       resp = client.database_info('zxvf')
       resp.code.should == 404
     end
@@ -53,7 +53,7 @@ describe Datomic::Client do
 
     %w{eavt aevt avet vaet}.each do |index|
       it "returns correct response for index '#{index}'" do
-        pending if index == 'vaet'
+        pending "possible bug" if index == 'vaet'
         resp = client.datoms('test-datoms', index)
         resp.code.should == 200
         resp.body.should match VEC
@@ -121,6 +121,26 @@ describe Datomic::Client do
       resp = client.monitor('test-monitor')
       resp.code.should == 200
       resp.body.should match(/\<script\>/)
+    end
+  end
+
+  describe "#events" do
+    before { client.create_database('test-events') }
+
+    it "returns correct response" do
+      begin
+        client.events('test-events') do |resp|
+          resp.code.should == "200"
+          # Don't see a cleaner way to quit after testing one event
+          raise Timeout::Error
+        end
+      rescue RestClient::RequestTimeout
+      end
+    end
+
+    it "returns a 503 for nonexistent db" do
+      expect { client.events('zzzz') }.
+        to raise_error(RestClient::ServiceUnavailable, /503 Service Unavailable/)
     end
   end
 end

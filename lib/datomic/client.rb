@@ -37,6 +37,14 @@ module Datomic
       RestClient.get root_url('monitor', @storage, dbname)
     end
 
+    # Given block is called with Net::HTTPOK response from event
+    def events(dbname, &block)
+      RestClient::Request.execute(:method => :get,
+        :url => root_url('events', @storage, dbname),
+        :headers => {:accept => "text/event-stream"},
+        :block_response => block)
+    end
+
     private
 
     def root_url(*parts)
