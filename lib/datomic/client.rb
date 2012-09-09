@@ -4,7 +4,7 @@ module Datomic
   class Client
     VERSION = '0.1.0'
 
-    def initialize(url, storage)
+    def initialize(url, storage = nil)
       @url = url
       @storage = storage
     end

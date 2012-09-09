@@ -1,11 +1,11 @@
 require 'datomic/client'
 
 describe Datomic::Client do
+  let(:datomic_uri) { ENV['DATOMIC_URI'] || 'http://localhost:9000' }
   # datomic's `rest` needs to run for these tests to pass i.e.
   #   bin/rest 9000 socrates datomic:mem://
   let(:client) do
-    Datomic::Client.new ENV['DATOMIC_URI'] || 'http://localhost:9000',
-      ENV['DATOMIC_STORAGE'] || 'socrates'
+    Datomic::Client.new datomic_uri, ENV['DATOMIC_STORAGE'] || 'socrates'
   end
 
   VEC = /^\[.*\]$/
@@ -104,7 +104,7 @@ describe Datomic::Client do
   end
 
   describe "#query" do
-    before { client.create_database('test-query') }
+    let(:client) { Datomic::Client.new datomic_uri }
 
     it "returns a correct response" do
       pending "til valid query given"
