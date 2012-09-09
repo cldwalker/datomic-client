@@ -113,4 +113,14 @@ describe Datomic::Client do
       resp.body.should match VEC
     end
   end
+
+  describe "#monitor" do
+    before { client.create_database('test-monitor') }
+
+    it "returns a correct response" do
+      resp = client.monitor('test-monitor')
+      resp.code.should == 200
+      resp.body.should match(/\<script\>/)
+    end
+  end
 end

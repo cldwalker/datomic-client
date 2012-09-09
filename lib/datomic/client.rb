@@ -33,6 +33,10 @@ module Datomic
       RestClient.get root_url("api/query"), :params => params.merge(:q => query)
     end
 
+    def monitor(dbname)
+      RestClient.get root_url('monitor', @storage, dbname)
+    end
+
     private
 
     def root_url(*parts)
