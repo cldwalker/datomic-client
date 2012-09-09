@@ -11,6 +11,11 @@ $ irb -Ilib -rdatomic/client
 >> datomic.create_database(dbname)
 >> datomic.database_info(dbname)
 >> datomic.datoms(dbname, 'aevt')
+>> datomic.range(dbname, :a => "db/ident")
+>> datomic.entity(1)
+>> datomic.query("[:find ?e :where [?e :id 1]]")
+>> datomic.monitor(dbname)
+>> datomic.events(dbname) {|r| puts "Received: #{r.inspect}" }
 ```
 
 ## Credits
