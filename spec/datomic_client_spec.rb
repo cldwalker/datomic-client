@@ -29,14 +29,14 @@ describe Datomic::Client do
     before { client.create_database('test-database_info') }
 
     it "returns 200 for existing database" do
-      resp = client.database_info('test123')
+      resp = client.database_info('test-database_info')
       resp.code.should == 200
       resp.body.should include(':basis-t')
       resp.body.should include(':db/alias')
     end
 
     it "returns database info for existing database" do
-      resp = client.database_info('test123')
+      resp = client.database_info('test-database_info')
       resp.body.should include(':basis-t')
       resp.body.should include(':db/alias')
     end
