@@ -102,4 +102,15 @@ describe Datomic::Client do
       resp.body.should match MAP
     end
   end
+
+  describe "#query" do
+    before { client.create_database('test-query') }
+
+    it "returns a correct response" do
+      pending "til valid query given"
+      resp = client.query("[:find ?e :where [?e :id 1]]")
+      resp.code.should == 200
+      resp.body.should match VEC
+    end
+  end
 end

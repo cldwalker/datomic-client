@@ -29,10 +29,18 @@ module Datomic
       RestClient.get db_url(dbname, 'entity', id), :params => params
     end
 
+    def query(query, params = {})
+      RestClient.get root_url("api/query"), :params => params.merge(:q => query)
+    end
+
     private
 
+    def root_url(*parts)
+      [@url].concat(parts).join('/')
+    end
+
     def db_url(dbname, *parts)
-      [@url, 'db', @storage, dbname].concat(parts).join('/')
+      root_url 'db', @storage, dbname, *parts
     end
   end
 end
