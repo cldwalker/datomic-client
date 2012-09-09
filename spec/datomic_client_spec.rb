@@ -8,6 +8,9 @@ describe Datomic::Client do
       ENV['DATOMIC_STORAGE'] || 'socrates'
   end
 
+  VEC = /^\[.*\]$/
+  MAP = /^\{.*\}$/
+
   describe "#create_database" do
     it "returns 201 when creating a new database" do
       resp = client.create_database("test-#{Time.now.to_i}")
@@ -53,7 +56,7 @@ describe Datomic::Client do
         pending if index == 'vaet'
         resp = client.datoms('test-datoms', index)
         resp.code.should == 200
-        resp.body.should match(/^\[.*\]$/)
+        resp.body.should match VEC
       end
     end
 
@@ -72,10 +75,10 @@ describe Datomic::Client do
   describe "#range" do
     before { client.create_database('test-range') }
 
-    it "returns 200 with required attribute" do
-      pending "til I figure out a correct attribute value"
-      resp = client.range('test-range', :a => 0)
+    it "returns correct response with required attribute" do
+      resp = client.range('test-range', :a => "db/ident")
       resp.code.should == 200
+      resp.body.should match VEC
     end
 
     it "raises 400 without required attribute" do
@@ -90,13 +93,13 @@ describe Datomic::Client do
     it "returns correct response" do
       resp = client.entity('test-entity', 1)
       resp.code.should == 200
-      resp.body.should match(/^\{.*\}$/)
+      resp.body.should match MAP
     end
 
     it "returns correct response with valid param" do
       resp = client.entity('test-entity', 1, :since => 0)
       resp.code.should == 200
-      resp.body.should match(/^\{.*\}$/)
+      resp.body.should match MAP
     end
   end
 end
