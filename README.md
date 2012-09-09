@@ -21,3 +21,8 @@ $ irb -Ilib -rdatomic/client
 ## Credits
 
 * @flyingmachine for starting this
+
+## Links
+
+* [API documentation](http://docs.datomic.com/rest.html)
+* [Initial announcement](http://blog.datomic.com/2012/09/rest-api.html)
