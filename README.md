@@ -10,6 +10,7 @@ $ irb -Ilib -rdatomic/client
 >> datomic = Datomic::Client.new 'http://localhost:9000', 'socrates'
 >> datomic.create_database(dbname)
 >> datomic.database_info(dbname)
+>> datomic.transact(dbname, "[:db/add 1 :some :value]")
 >> datomic.datoms(dbname, 'aevt')
 >> datomic.range(dbname, :a => "db/ident")
 >> datomic.entity(1)
@@ -20,7 +21,7 @@ $ irb -Ilib -rdatomic/client
 
 ## Credits
 
-* @flyingmachine for starting this
+* @flyingmachine for starting this with me
 
 ## Links
 

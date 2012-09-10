@@ -17,6 +17,10 @@ module Datomic
       RestClient.get db_url(dbname)
     end
 
+    def transact(dbname, data)
+      RestClient.post db_url(dbname), data
+    end
+
     def datoms(dbname, index, params = {})
       RestClient.get db_url(dbname, "datoms/#{index}"), :params => params
     end

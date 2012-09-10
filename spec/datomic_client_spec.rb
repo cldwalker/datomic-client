@@ -48,6 +48,17 @@ describe Datomic::Client do
     end
   end
 
+  describe "#transact" do
+    before { client.create_database('test-transact') }
+
+    it "returns correct response" do
+      pending "til valid transaction data given"
+      resp = client.transact('test-transact', "[:db/add 1 :some :value]")
+      resp.code.should == 200
+      resp.body.should match MAP
+    end
+  end
+
   describe "#datoms" do
     before { client.create_database('test-datoms') }
 
