@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = "Gabriel Horner"
   s.email       = "gabriel.horner@gmail.com"
   s.homepage    = "http://github.com/cldwalker/datomic-client"
-  s.summary     = %q{client for datomic's rest API}
-  s.description = "This client provides a simple way to use datomic's REST API - http://docs.datomic.com/rest.html."
+  s.summary     = %q{http client for datomic's API}
+  s.description = "This gem provides a simple way to use datomic's http API - http://docs.datomic.com/rest.html."
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
