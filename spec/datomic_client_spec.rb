@@ -8,9 +8,6 @@ describe Datomic::Client do
     Datomic::Client.new datomic_uri, ENV['DATOMIC_STORAGE'] || 'socrates'
   end
 
-  VEC = /^\[.*\]$/
-  MAP = /^\{.*\}$/
-
   describe "#create_database" do
     it "returns 201 when creating a new database" do
       resp = client.create_database("test-#{Time.now.to_i}")
@@ -31,14 +28,14 @@ describe Datomic::Client do
     it "returns 200 for existing database" do
       resp = client.database_info('test-database_info')
       resp.code.should == 200
-      resp.body.should include(':basis-t')
-      resp.body.should include(':db/alias')
+      resp.body.should have_key(:"basis-t")
+      resp.body.should have_key(:"db/alias")
     end
 
     it "returns database info for existing database" do
       resp = client.database_info('test-database_info')
-      resp.body.should include(':basis-t')
-      resp.body.should include(':db/alias')
+      resp.body.should have_key(:"basis-t")
+      resp.body.should have_key(:"db/alias")
     end
 
     it "returns 404 for nonexistent database" do
@@ -55,7 +52,7 @@ describe Datomic::Client do
       pending "til valid transaction data given"
       resp = client.transact('test-transact', "[:db/add 1 :some :value]")
       resp.code.should == 200
-      resp.body.should match MAP
+      resp.body.should be_a(Hash)
     end
   end
 
@@ -67,7 +64,7 @@ describe Datomic::Client do
         pending "possible bug" if index == 'vaet'
         resp = client.datoms('test-datoms', index)
         resp.code.should == 200
-        resp.body.should match VEC
+        resp.body.should be_a(Array)
       end
     end
 
@@ -79,7 +76,7 @@ describe Datomic::Client do
     it "returns correct response with limit param" do
       resp = client.datoms('test-datoms', "eavt", :limit => 0)
       resp.code.should == 200
-      resp.body.should == "[]"
+      resp.body.should == []
     end
   end
 
@@ -89,7 +86,7 @@ describe Datomic::Client do
     it "returns correct response with required attribute" do
       resp = client.range('test-range', :a => "db/ident")
       resp.code.should == 200
-      resp.body.should match VEC
+      resp.body.should be_a(Array)
     end
 
     it "raises 400 without required attribute" do
@@ -104,13 +101,13 @@ describe Datomic::Client do
     it "returns correct response" do
       resp = client.entity('test-entity', 1)
       resp.code.should == 200
-      resp.body.should match MAP
+      resp.body.should be_a(Hash)
     end
 
     it "returns correct response with valid param" do
       resp = client.entity('test-entity', 1, :since => 0)
       resp.code.should == 200
-      resp.body.should match MAP
+      resp.body.should be_a(Hash)
     end
   end
 
@@ -121,7 +118,7 @@ describe Datomic::Client do
       pending "til valid query given"
       resp = client.query("[:find ?e :where [?e :id 1]]")
       resp.code.should == 200
-      resp.body.should match VEC
+      resp.body.should be_a(Array)
     end
   end
 
