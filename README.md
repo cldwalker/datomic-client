@@ -45,6 +45,10 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 
 * @flyingmachine for starting this with me
 
+##Todo
+
+* Fix pending specs
+
 ## Links
 
 * [API documentation](http://docs.datomic.com/rest.html)
