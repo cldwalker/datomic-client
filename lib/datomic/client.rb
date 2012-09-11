@@ -1,9 +1,9 @@
+$:.push(File.expand_path('../..', __FILE__))
+require 'datomic/client/version'
 require 'rest-client'
 
 module Datomic
   class Client
-    VERSION = '0.1.0'
-
     def initialize(url, storage = nil)
       @url = url
       @storage = storage
