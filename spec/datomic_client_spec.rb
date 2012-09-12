@@ -8,6 +8,10 @@ describe Datomic::Client do
     Datomic::Client.new datomic_uri, ENV['DATOMIC_STORAGE'] || 'socrates'
   end
 
+  let(:schema) { File.read(File.expand_path('../fixtures/seattle-schema.dtm', __FILE__)) }
+  let(:data) { File.read(File.expand_path('../fixtures/seattle-data0.dtm', __FILE__)) }
+
+
   describe "#create_database" do
     it "returns 201 when creating a new database" do
       resp = client.create_database("test-#{Time.now.to_i}")
@@ -48,9 +52,15 @@ describe Datomic::Client do
   describe "#transact" do
     before { client.create_database('test-transact') }
 
-    it "returns correct response" do
-      pending "til valid transaction data given"
-      resp = client.transact('test-transact', "[:db/add 1 :some :value]")
+    it "returns correct response with string of data" do
+      resp = client.transact('test-transact', schema)
+      resp.code.should == 200
+      resp.body.should be_a(Hash)
+    end
+
+    it "returns correct response with array of data" do
+      # TODO these are magic spooky values
+      resp = client.transact('test-transact', [[:"db/add", 1, 61, "value"]])
       resp.code.should == 200
       resp.body.should be_a(Hash)
     end
@@ -112,14 +122,25 @@ describe Datomic::Client do
   end
 
   describe "#query" do
-    let(:client) { Datomic::Client.new datomic_uri }
+    before {
+      client.create_database('test-query')
+      client.transact('test-query', schema)
+    }
 
-    it "returns a correct response" do
-      pending "til valid query given"
-      resp = client.query("[:find ?e :where [?e :id 1]]")
+    it "returns a correct response with a string query" do
+      resp = client.query('test-query', '[:find ?c :where [?c :community/name]]')
       resp.code.should == 200
       resp.body.should be_a(Array)
     end
+
+    it "returns a correct response with a data query" do
+      resp = client.query('test-query',
+                    [:find, EDN::Type::Symbol.new('?c'), :where,
+                          [EDN::Type::Symbol.new('?c'), :"community/name"]])
+      resp.code.should == 200
+      resp.body.should be_a(Array)
+    end
+
   end
 
   describe "#monitor" do

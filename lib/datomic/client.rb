@@ -25,7 +25,8 @@ module Datomic
     end
 
     def transact(dbname, data)
-      RestClient.post(db_url(dbname), data, &READ_EDN)
+      data = transmute_data(data)
+      RestClient.post(db_url(dbname), data, :content_type => 'application/x-edn', &READ_EDN)
     end
 
     def datoms(dbname, index, params = {})
@@ -40,8 +41,10 @@ module Datomic
       RestClient.get(db_url(dbname, 'entity', id), :params => params, &READ_EDN)
     end
 
-    def query(query, params = {})
-      RestClient.get(root_url("api/query"), :params => params.merge(:q => query), &READ_EDN)
+    def query(dbname, query, params = {})
+      query = transmute_data(query)
+      args = [{:"db/alias" => [@storage, dbname].join('/')}].to_edn
+      RestClient.get(root_url("api/query"), :params => params.merge(:q => query, :args => args), &READ_EDN)
     end
 
     def monitor(dbname)
@@ -64,6 +67,10 @@ module Datomic
 
     def db_url(dbname, *parts)
       root_url 'db', @storage, dbname, *parts
+    end
+
+    def transmute_data(data)
+      data.is_a?(String) ? data : data.to_edn
     end
   end
 end
