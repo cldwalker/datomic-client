@@ -1,6 +1,5 @@
 # -*- encoding: utf-8 -*-
-$:.push File.expand_path("../lib", __FILE__)
-require "datomic/client"
+require File.expand_path('../lib/datomic/client/version', __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "datomic-client"
@@ -20,4 +19,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rake', '~> 0.9.2.2'
   s.add_dependency 'rest-client'
+  s.add_dependency 'edn', '~> 0.9.1'
 end
