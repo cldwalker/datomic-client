@@ -9,8 +9,6 @@ describe Datomic::Client do
   end
 
   let(:schema) { File.read(File.expand_path('../fixtures/seattle-schema.dtm', __FILE__)) }
-  let(:data) { File.read(File.expand_path('../fixtures/seattle-data0.dtm', __FILE__)) }
-
 
   describe "#create_database" do
     it "returns 201 when creating a new database" do

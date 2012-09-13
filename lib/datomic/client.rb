@@ -1,4 +1,3 @@
-$:.push(File.expand_path('../..', __FILE__))
 require 'datomic/client/version'
 require 'rest-client'
 require 'edn'
