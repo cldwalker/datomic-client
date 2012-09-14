@@ -1,6 +1,7 @@
 require 'datomic/client/version'
 require 'datomic/client/response'
 require 'rest-client'
+require 'set' # Remove when fixed upstream
 require 'edn'
 
 module Datomic
