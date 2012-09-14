@@ -41,8 +41,7 @@ module Datomic
     # * :t - Specifies version/time of db. Defaults to latest version
     def datoms(dbname, params = {})
       version = params.fetch(:t, '-')
-      get db_url(dbname, version, "datoms"), :params => params,
-        :Accept => 'application/edn'
+      get db_url(dbname, version, "datoms"), params
     end
 
     # params take any param in addition to following options:
@@ -51,16 +50,14 @@ module Datomic
     # * :t - Specifies version/time of db. Defaults to latest version
     def entity(dbname, id, params = {})
       version = params.fetch(:t, '-')
-      get db_url(dbname, version, 'entity'), :params => params.merge(:e => id),
-        :Accept => 'application/edn'
+      get db_url(dbname, version, 'entity'), params.merge(:e => id)
     end
 
     # Query can be a ruby data structure or a string representing clojure data
     def query(dbname, query, params = {})
       query = transmute_data(query)
       args = [{:"db/alias" => [@storage, dbname].join('/')}].to_edn
-      get root_url("api/query"), :params => params.merge(:q => query, :args => args),
-        :Accept => 'application/edn'
+      get root_url("api/query"), params.merge(:q => query, :args => args)
     end
 
     # Streams events. For each event, given block is called with Net::HTTP
@@ -75,8 +72,9 @@ module Datomic
 
     private
 
-    def get(*args)
-      RestClient.get(*args, &HANDLE_RESPONSE)
+    def get(url, params = {})
+      RestClient.get(url, :params => params, :Accept => 'application/edn',
+                     &HANDLE_RESPONSE)
     end
 
     def root_url(*parts)
