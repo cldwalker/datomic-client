@@ -64,8 +64,6 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 
 * Release support for 0.8.3511
   * Add latest, permalink endpoints for latest datomic
-  * Don't require index param on datoms endpoint
-* Fix pending specs
 
 ## Links
 

@@ -66,37 +66,27 @@ describe Datomic::Client do
 
     %w{eavt aevt avet vaet}.each do |index|
       it "returns correct response for index '#{index}'" do
-        resp = client.datoms('test-datoms', index)
+        resp = client.datoms('test-datoms', :index => index)
         resp.code.should == 200
         resp.data.should be_a(Array)
       end
     end
 
     it "returns 500 for invalid index" do
-       resp = client.datoms('test-datoms', 'blarg')
+       resp = client.datoms('test-datoms', :index => 'blarg')
        resp.code.should == 500
     end
 
     it "returns correct response with limit param" do
-      resp = client.datoms('test-datoms', "eavt", :limit => 0)
+      resp = client.datoms('test-datoms', :index => "eavt", :limit => 0)
       resp.code.should == 200
       resp.data.should == []
     end
-  end
 
-  describe "#range" do
-    before { pending "merge into datoms tests" }
-    before { client.create_database('test-range') }
-
-    it "returns correct response with required attribute" do
-      resp = client.range('test-range', :a => "db/ident")
+    it "returns correct response for range usage" do
+      resp = client.datoms('test-datoms', :index => 'avet', :a => 'db/ident')
       resp.code.should == 200
       resp.data.should be_a(Array)
-    end
-
-    it "returns 400 without required attribute" do
-      resp = client.range('test-range')
-      resp.code.should == 400
     end
   end
 

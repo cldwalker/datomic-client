@@ -31,9 +31,9 @@ module Datomic
                       :Accept => 'application/edn', &HANDLE_RESPONSE)
     end
 
-    # Index only has certain valid types. See datomic's docs for details.
-    def datoms(dbname, index, params = {})
-      get db_url(dbname, "-", "datoms"), :params => params.merge(:index => index),
+    # This endpoint hits both datoms and index-range APIs.
+    def datoms(dbname, params = {})
+      get db_url(dbname, "-", "datoms"), :params => params,
         :Accept => 'application/edn'
     end
 
