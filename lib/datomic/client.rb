@@ -51,7 +51,7 @@ module Datomic
     end
 
     def monitor(dbname)
-      get root_url('monitor', @storage, dbname)
+      get db_url(dbname, '-', 'events')
     end
 
     # Given block is called with Net::HTTPOK response from event

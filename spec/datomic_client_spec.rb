@@ -48,16 +48,14 @@ describe Datomic::Client do
 
     it "returns correct response with string of data" do
       resp = client.transact('test-transact', schema)
-      pending "Docs say 200 but getting 201"
-      resp.code.should == 200
+      resp.code.should == 201
       resp.data.should be_a(Hash)
       resp.data.keys.sort.should == [:"db-after", :"db-before", :tempids, :"tx-data"]
     end
 
     it "returns correct response with array of data" do
       resp = client.transact('test-transact', [[:"db/add", 1, :"community/name", "Some Community"]])
-      pending "Docs say 200 but getting 201"
-      resp.code.should == 200
+      resp.code.should == 201
       resp.data.should be_a(Hash)
       resp.data.keys.sort.should == [:"db-after", :"db-before", :tempids, :"tx-data"]
     end
@@ -153,7 +151,6 @@ describe Datomic::Client do
     before { client.create_database('test-monitor') }
 
     it "returns a correct response" do
-      pending "endpoint still exist?"
       resp = client.monitor('test-monitor')
       resp.code.should == 200
       resp.body.should match(/\<script\>/)
