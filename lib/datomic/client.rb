@@ -20,8 +20,11 @@ module Datomic
         :content_type => 'application/x-www-form-urlencoded', &HANDLE_RESPONSE
     end
 
-    def database_info(dbname)
-      get db_url(dbname, '-') + "/", :Accept => 'application/edn'
+    # Options:
+    # * :t - Specifies version/time of db. Defaults to latest version
+    def database_info(dbname, options = {})
+      version = options.fetch(:t, '-')
+      get db_url(dbname, version) + "/", :Accept => 'application/edn'
     end
 
     # Data can be a ruby data structure or a string representing clojure data
@@ -32,13 +35,23 @@ module Datomic
     end
 
     # This endpoint hits both datoms and index-range APIs.
+    # params take any param in addition to following options:
+    #
+    # Options:
+    # * :t - Specifies version/time of db. Defaults to latest version
     def datoms(dbname, params = {})
-      get db_url(dbname, "-", "datoms"), :params => params,
+      version = params.fetch(:t, '-')
+      get db_url(dbname, version, "datoms"), :params => params,
         :Accept => 'application/edn'
     end
 
+    # params take any param in addition to following options:
+    #
+    # Options:
+    # * :t - Specifies version/time of db. Defaults to latest version
     def entity(dbname, id, params = {})
-      get db_url(dbname, '-', 'entity'), :params => params.merge(:e => id),
+      version = params.fetch(:t, '-')
+      get db_url(dbname, version, 'entity'), :params => params.merge(:e => id),
         :Accept => 'application/edn'
     end
 

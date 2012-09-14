@@ -60,11 +60,6 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 * @crnixon for adding edn support
 * @flyingmachine for starting this with me
 
-##Todo
-
-* Release support for 0.8.3511
-  * Add latest, permalink endpoints for latest datomic
-
 ## Links
 
 * [API documentation](http://docs.datomic.com/rest.html) - Actual documentation now resides on root

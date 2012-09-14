@@ -37,6 +37,12 @@ describe Datomic::Client do
       resp.data.should have_key(:"db/alias")
     end
 
+    it "returns 200 for different version" do
+      resp = client.database_info('test-database_info', :t => 1)
+      resp.code.should == 200
+      resp.args[:url].should match(%r{/1/$})
+    end
+
     it "returns 404 for nonexistent database" do
       resp = client.database_info('zxvf')
       resp.code.should == 404
@@ -88,6 +94,12 @@ describe Datomic::Client do
       resp.code.should == 200
       resp.data.should be_a(Array)
     end
+
+    it "returns correct response for different version" do
+      resp = client.datoms('test-datoms', :t => 2)
+      resp.code.should == 200
+      resp.args[:url].should match(%r{2/datoms$})
+    end
   end
 
   describe "#entity" do
@@ -103,6 +115,12 @@ describe Datomic::Client do
       resp = client.entity('test-entity', 1, :since => 0)
       resp.code.should == 200
       resp.data.should be_a(Hash)
+    end
+
+    it "returns correct response for different version" do
+      resp = client.entity('test-entity', 1, :t => 2)
+      resp.code.should == 200
+      resp.args[:url].should match(%r{2/entity$})
     end
   end
 
