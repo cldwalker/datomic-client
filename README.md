@@ -67,5 +67,6 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 
 ## Links
 
-* [API documentation](http://docs.datomic.com/rest.html)
+* [API documentation](http://docs.datomic.com/rest.html) - Actual documentation now resides on root
+  url of datomic endpoint
 * [Initial announcement](http://blog.datomic.com/2012/09/rest-api.html)
