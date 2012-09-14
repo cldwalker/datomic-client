@@ -45,7 +45,6 @@ $ irb -rdatomic/client
 >> datomic.datoms(dbname, 'aevt')
 >> datomic.range(dbname, :a => "db/ident")
 >> datomic.entity(dbname, 1)
->> datomic.monitor(dbname)
 >> datomic.events(dbname) {|r| puts "Received: #{r.inspect}" }
 ```
 

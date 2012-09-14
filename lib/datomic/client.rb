@@ -63,11 +63,8 @@ module Datomic
         :Accept => 'application/edn'
     end
 
-    def monitor(dbname)
-      get db_url(dbname, '-', 'events')
-    end
-
-    # Given block is called with Net::HTTPOK response from event
+    # Streams events. For each event, given block is called with Net::HTTP
+    # response from event
     def events(dbname, &block)
       # can't use RestClient.get b/c of :block_response
       RestClient::Request.execute(:method => :get,
