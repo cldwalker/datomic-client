@@ -22,11 +22,13 @@ module Datomic
       get db_url(dbname)
     end
 
+    # Data can be a ruby data structure or a string representing clojure data
     def transact(dbname, data)
       data = transmute_data(data)
       RestClient.post(db_url(dbname), data, :content_type => 'application/x-edn', &HANDLE_RESPONSE)
     end
 
+    # Index only has certain valid types. See datomic's docs for details.
     def datoms(dbname, index, params = {})
       get db_url(dbname, "datoms/#{index}"), :params => params
     end
@@ -39,6 +41,7 @@ module Datomic
       get db_url(dbname, 'entity', id), :params => params
     end
 
+    # Query can be a ruby data structure or a string representing clojure data
     def query(dbname, query, params = {})
       query = transmute_data(query)
       args = [{:"db/alias" => [@storage, dbname].join('/')}].to_edn

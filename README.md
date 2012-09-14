@@ -16,21 +16,35 @@ and then `bundle`.
 
 ## Usage
 
-```sh
+```ruby
 # In another shell in datomic's directory
 $ bin/rest 9000 socrates datomic:mem://
 
+# Assuming you have a schema with a :"community/name" attribute
 # In project's directory
 $ irb -rdatomic/client
 >> dbname = 'cosas'
 >> datomic = Datomic::Client.new 'http://localhost:9000', 'socrates'
->> datomic.create_database(dbname)
+>> resp = datomic.create_database(dbname)
+=> #<Datomic::Client::Response:0x0000010157bc58 @body="", @args={:method=>:put,
+:url=>"http://localhost:9000/db/socrates/test-1347638297", :payload=>{}, :headers=>{}},
+@net_http=#<Net::HTTPCreated 201 Created readbody=true>, @rest_client_response="">
+>> resp.code
+=> 201
+>> resp.body
+=> ''
+
+# Most responses are in edn and thus can be accessed natively
+>> resp = datomic.query(dbname, '[:find ?c :where [?c :community/name]]')
+>> resp.data
+=> [[1]]
+
+# additional endpoints
 >> datomic.database_info(dbname)
->> datomic.transact(dbname, "TODO")
+>> datomic.transact(dbname, [[:"db/add", 1, :"community/name", "Some Community"]])
 >> datomic.datoms(dbname, 'aevt')
 >> datomic.range(dbname, :a => "db/ident")
 >> datomic.entity(dbname, 1)
->> datomic.query(dbname, "TODO")
 >> datomic.monitor(dbname)
 >> datomic.events(dbname) {|r| puts "Received: #{r.inspect}" }
 ```
@@ -43,10 +57,12 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 
 ## Credits
 
+* @crnixon for adding edn support
 * @flyingmachine for starting this with me
 
 ##Todo
 
+* Allow entity endpoint to take an e param
 * Fix pending specs
 
 ## Links

@@ -1,13 +1,12 @@
 require 'datomic/client'
 
+# datomic's `rest` needs to run for these tests to pass i.e.
+#   bin/rest 9000 socrates datomic:mem://
 describe Datomic::Client do
   let(:datomic_uri) { ENV['DATOMIC_URI'] || 'http://localhost:9000' }
-  # datomic's `rest` needs to run for these tests to pass i.e.
-  #   bin/rest 9000 socrates datomic:mem://
   let(:client) do
     Datomic::Client.new datomic_uri, ENV['DATOMIC_STORAGE'] || 'socrates'
   end
-
   let(:schema) { File.read(File.expand_path('../fixtures/seattle-schema.dtm', __FILE__)) }
 
   describe "#create_database" do
