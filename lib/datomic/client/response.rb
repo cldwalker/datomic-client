@@ -3,7 +3,7 @@ module Datomic
     class Response
       # Response body as a string
       attr_reader :body
-      # Net:HTTP response
+      # Underlying Net:HTTP response
       attr_reader :net_http
 
       def initialize(body, response, request)

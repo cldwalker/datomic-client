@@ -5,7 +5,7 @@ require 'edn'
 
 module Datomic
   class Client
-    READ_EDN = lambda do |body, request, response|
+    HANDLE_RESPONSE = lambda do |body, request, response|
       Response.new body, response, request
     end
 
@@ -15,49 +15,54 @@ module Datomic
     end
 
     def create_database(dbname)
-      RestClient.put db_url(dbname), {}, &READ_EDN
+      RestClient.put db_url(dbname), {}, &HANDLE_RESPONSE
     end
 
     def database_info(dbname)
-      RestClient.get(db_url(dbname), &READ_EDN)
+      get db_url(dbname)
     end
 
     def transact(dbname, data)
       data = transmute_data(data)
-      RestClient.post(db_url(dbname), data, :content_type => 'application/x-edn', &READ_EDN)
+      RestClient.post(db_url(dbname), data, :content_type => 'application/x-edn', &HANDLE_RESPONSE)
     end
 
     def datoms(dbname, index, params = {})
-      RestClient.get(db_url(dbname, "datoms/#{index}"), {:params => params}, &READ_EDN)
+      get db_url(dbname, "datoms/#{index}"), :params => params
     end
 
     def range(dbname, params = {})
-      RestClient.get(db_url(dbname, 'range'), {:params => params}, &READ_EDN)
+      get db_url(dbname, 'range'), :params => params
     end
 
     def entity(dbname, id, params = {})
-      RestClient.get(db_url(dbname, 'entity', id), :params => params, &READ_EDN)
+      get db_url(dbname, 'entity', id), :params => params
     end
 
     def query(dbname, query, params = {})
       query = transmute_data(query)
       args = [{:"db/alias" => [@storage, dbname].join('/')}].to_edn
-      RestClient.get(root_url("api/query"), :params => params.merge(:q => query, :args => args), &READ_EDN)
+      get root_url("api/query"), :params => params.merge(:q => query, :args => args)
     end
 
     def monitor(dbname)
-      RestClient.get root_url('monitor', @storage, dbname), &READ_EDN
+      get root_url('monitor', @storage, dbname)
     end
 
     # Given block is called with Net::HTTPOK response from event
     def events(dbname, &block)
+      # can't use RestClient.get b/c of :block_response
       RestClient::Request.execute(:method => :get,
         :url => root_url('events', @storage, dbname),
         :headers => {:accept => "text/event-stream"},
-        :block_response => block, &READ_EDN)
+        :block_response => block, &HANDLE_RESPONSE)
     end
 
     private
+
+    def get(*args)
+      RestClient.get(*args, &HANDLE_RESPONSE)
+    end
 
     def root_url(*parts)
       [@url].concat(parts).join('/')
