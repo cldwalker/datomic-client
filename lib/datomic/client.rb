@@ -16,22 +16,23 @@ module Datomic
     end
 
     def create_database(dbname)
-      RestClient.put db_url(dbname), {}, &HANDLE_RESPONSE
+      RestClient.post root_url('data', @storage) + "/", {"db-name" => dbname},
+        :content_type => 'application/x-www-form-urlencoded', &HANDLE_RESPONSE
     end
 
     def database_info(dbname)
-      get db_url(dbname)
+      get db_url(dbname) + "/-/", :content_type => 'application/edn'
     end
 
     # Data can be a ruby data structure or a string representing clojure data
     def transact(dbname, data)
       data = transmute_data(data)
-      RestClient.post(db_url(dbname), data, :content_type => 'application/x-edn', &HANDLE_RESPONSE)
+      RestClient.post(db_url(dbname) + "/", {"tx-data" => data}, :content_type => 'application/x-edn', &HANDLE_RESPONSE)
     end
 
     # Index only has certain valid types. See datomic's docs for details.
     def datoms(dbname, index, params = {})
-      get db_url(dbname, "datoms/#{index}"), :params => params
+      get db_url(dbname, "datoms/"), :params => params.merge(:index => index)
     end
 
     def range(dbname, params = {})
@@ -73,7 +74,7 @@ module Datomic
     end
 
     def db_url(dbname, *parts)
-      root_url 'db', @storage, dbname, *parts
+      root_url 'data', @storage, dbname, *parts
     end
 
     def transmute_data(data)
