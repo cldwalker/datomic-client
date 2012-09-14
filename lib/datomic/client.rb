@@ -21,29 +21,33 @@ module Datomic
     end
 
     def database_info(dbname)
-      get db_url(dbname) + "/-/", :content_type => 'application/edn'
+      get db_url(dbname, '-') + "/", :Accept => 'application/edn'
     end
 
     # Data can be a ruby data structure or a string representing clojure data
     def transact(dbname, data)
       data = transmute_data(data)
-      RestClient.post(db_url(dbname) + "/", {"tx-data" => data}, :content_type => 'application/x-edn', &HANDLE_RESPONSE)
+      RestClient.post(db_url(dbname) + "/", {"tx-data" => data},
+                      :Accept => 'application/edn', &HANDLE_RESPONSE)
     end
 
     # Index only has certain valid types. See datomic's docs for details.
     def datoms(dbname, index, params = {})
-      get db_url(dbname, "-", "datoms"), :params => params.merge(:index => index)
+      get db_url(dbname, "-", "datoms"), :params => params.merge(:index => index),
+        :Accept => 'application/edn'
     end
 
     def entity(dbname, id, params = {})
-      get db_url(dbname, '-', 'entity'), :params => params.merge(:e => id)
+      get db_url(dbname, '-', 'entity'), :params => params.merge(:e => id),
+        :Accept => 'application/edn'
     end
 
     # Query can be a ruby data structure or a string representing clojure data
     def query(dbname, query, params = {})
       query = transmute_data(query)
       args = [{:"db/alias" => [@storage, dbname].join('/')}].to_edn
-      get root_url("api/query"), :params => params.merge(:q => query, :args => args)
+      get root_url("api/query"), :params => params.merge(:q => query, :args => args),
+        :Accept => 'application/edn'
     end
 
     def monitor(dbname)

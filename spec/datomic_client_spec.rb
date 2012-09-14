@@ -33,7 +33,6 @@ describe Datomic::Client do
 
     it "returns database info for existing database" do
       resp = client.database_info('test-database_info')
-      pending "fix receiving edn"
       resp.data.should have_key(:"basis-t")
       resp.data.should have_key(:"db/alias")
     end
@@ -51,7 +50,6 @@ describe Datomic::Client do
       resp = client.transact('test-transact', schema)
       pending "Docs say 200 but getting 201"
       resp.code.should == 200
-      # TODO: fix receiving edn
       resp.data.should be_a(Hash)
       resp.data.keys.sort.should == [:"db-after", :"db-before", :tempids, :"tx-data"]
     end
@@ -72,7 +70,6 @@ describe Datomic::Client do
       it "returns correct response for index '#{index}'" do
         resp = client.datoms('test-datoms', index)
         resp.code.should == 200
-        pending "fix receiving edn"
         resp.data.should be_a(Array)
       end
     end
@@ -85,13 +82,12 @@ describe Datomic::Client do
     it "returns correct response with limit param" do
       resp = client.datoms('test-datoms', "eavt", :limit => 0)
       resp.code.should == 200
-      pending "fix receiving edn"
       resp.data.should == []
     end
   end
 
   describe "#range" do
-    before { pending "til merged into datoms tests" }
+    before { pending "merge into datoms tests" }
     before { client.create_database('test-range') }
 
     it "returns correct response with required attribute" do
@@ -112,14 +108,12 @@ describe Datomic::Client do
     it "returns correct response" do
       resp = client.entity('test-entity', 1)
       resp.code.should == 200
-      pending "fix receiving edn"
       resp.data.should be_a(Hash)
     end
 
     it "returns correct response with valid param" do
       resp = client.entity('test-entity', 1, :since => 0)
       resp.code.should == 200
-      pending "fix receiving edn"
       resp.data.should be_a(Hash)
     end
   end
@@ -134,7 +128,6 @@ describe Datomic::Client do
     it "returns a correct response with a string query" do
       resp = client.query('test-query', '[:find ?c :where [?c :community/name]]')
       resp.code.should == 200
-      pending "fix receiving edn"
       resp.data.should be_a(Array)
       resp.data.should == [[1]]
     end
@@ -142,7 +135,6 @@ describe Datomic::Client do
     it "returns a correct response with limit param" do
       resp = client.query('test-query', '[:find ?c :where [?c :community/name]]', :limit => 0)
       resp.code.should == 200
-      pending "fix receiving edn"
       resp.data.should be_a(Array)
       resp.data.should == []
     end
@@ -152,7 +144,6 @@ describe Datomic::Client do
                     [:find, EDN::Type::Symbol.new('?c'), :where,
                           [EDN::Type::Symbol.new('?c'), :"community/name"]])
       resp.code.should == 200
-      pending "fix receiving edn"
       resp.data.should be_a(Array)
     end
 
@@ -162,7 +153,7 @@ describe Datomic::Client do
     before { client.create_database('test-monitor') }
 
     it "returns a correct response" do
-      pending "does this still exist?"
+      pending "endpoint still exist?"
       resp = client.monitor('test-monitor')
       resp.code.should == 200
       resp.body.should match(/\<script\>/)

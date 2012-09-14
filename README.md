@@ -63,7 +63,7 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 ##Todo
 
 * Add latest, permalink endpoints for latest datomic
-* Allow entity endpoint to take an e param
+* Don't require index param on datoms endpoint
 * Fix pending specs
 
 ## Links
