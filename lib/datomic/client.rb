@@ -32,15 +32,11 @@ module Datomic
 
     # Index only has certain valid types. See datomic's docs for details.
     def datoms(dbname, index, params = {})
-      get db_url(dbname, "datoms/"), :params => params.merge(:index => index)
-    end
-
-    def range(dbname, params = {})
-      get db_url(dbname, 'range'), :params => params
+      get db_url(dbname, "-", "datoms"), :params => params.merge(:index => index)
     end
 
     def entity(dbname, id, params = {})
-      get db_url(dbname, 'entity', id), :params => params
+      get db_url(dbname, '-', 'entity'), :params => params.merge(:e => id)
     end
 
     # Query can be a ruby data structure or a string representing clojure data

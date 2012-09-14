@@ -5,6 +5,7 @@ module Datomic
       attr_reader :body
       # Underlying Net:HTTP response
       attr_reader :net_http
+      # Args used to make request
       attr_reader :args
 
       def initialize(body, response, request)
