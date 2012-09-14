@@ -1,13 +1,12 @@
 require 'datomic/client/version'
+require 'datomic/client/response'
 require 'rest-client'
 require 'edn'
 
 module Datomic
   class Client
     READ_EDN = lambda do |body, request, response|
-      res = EDN.read(body) rescue body
-      res = RestClient::Response.create(res, response, request.args)
-      res.return!(request, response)
+      Response.new body, response, request
     end
 
     def initialize(url, storage = nil)
@@ -16,7 +15,7 @@ module Datomic
     end
 
     def create_database(dbname)
-      RestClient.put db_url(dbname), {}
+      RestClient.put db_url(dbname), {}, &READ_EDN
     end
 
     def database_info(dbname)
@@ -47,7 +46,7 @@ module Datomic
     end
 
     def monitor(dbname)
-      RestClient.get root_url('monitor', @storage, dbname)
+      RestClient.get root_url('monitor', @storage, dbname), &READ_EDN
     end
 
     # Given block is called with Net::HTTPOK response from event
@@ -55,7 +54,7 @@ module Datomic
       RestClient::Request.execute(:method => :get,
         :url => root_url('events', @storage, dbname),
         :headers => {:accept => "text/event-stream"},
-        :block_response => block)
+        :block_response => block, &READ_EDN)
     end
 
     private

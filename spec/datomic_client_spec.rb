@@ -30,14 +30,14 @@ describe Datomic::Client do
     it "returns 200 for existing database" do
       resp = client.database_info('test-database_info')
       resp.code.should == 200
-      resp.body.should have_key(:"basis-t")
-      resp.body.should have_key(:"db/alias")
+      resp.data.should have_key(:"basis-t")
+      resp.data.should have_key(:"db/alias")
     end
 
     it "returns database info for existing database" do
       resp = client.database_info('test-database_info')
-      resp.body.should have_key(:"basis-t")
-      resp.body.should have_key(:"db/alias")
+      resp.data.should have_key(:"basis-t")
+      resp.data.should have_key(:"db/alias")
     end
 
     it "returns 404 for nonexistent database" do
@@ -53,15 +53,15 @@ describe Datomic::Client do
     it "returns correct response with string of data" do
       resp = client.transact('test-transact', schema)
       resp.code.should == 200
-      resp.body.should be_a(Hash)
-      resp.body.keys.sort.should == [:"db-after", :"db-before", :tempids, :"tx-data"]
+      resp.data.should be_a(Hash)
+      resp.data.keys.sort.should == [:"db-after", :"db-before", :tempids, :"tx-data"]
     end
 
     it "returns correct response with array of data" do
       resp = client.transact('test-transact', [[:"db/add", 1, :"community/name", "Some Community"]])
       resp.code.should == 200
-      resp.body.should be_a(Hash)
-      resp.body.keys.sort.should == [:"db-after", :"db-before", :tempids, :"tx-data"]
+      resp.data.should be_a(Hash)
+      resp.data.keys.sort.should == [:"db-after", :"db-before", :tempids, :"tx-data"]
     end
   end
 
@@ -73,19 +73,19 @@ describe Datomic::Client do
         pending "possible bug" if index == 'vaet'
         resp = client.datoms('test-datoms', index)
         resp.code.should == 200
-        resp.body.should be_a(Array)
+        resp.data.should be_a(Array)
       end
     end
 
-    it "raises 500 error for invalid index" do
-       expect { client.datoms('test-datoms', 'blarg') }.
-         to raise_error(RestClient::InternalServerError, /500 Internal Server Error/)
+    it "returns 500 for invalid index" do
+       resp = client.datoms('test-datoms', 'blarg')
+       resp.code.should == 500
     end
 
     it "returns correct response with limit param" do
       resp = client.datoms('test-datoms', "eavt", :limit => 0)
       resp.code.should == 200
-      resp.body.should == []
+      resp.data.should == []
     end
   end
 
@@ -95,12 +95,12 @@ describe Datomic::Client do
     it "returns correct response with required attribute" do
       resp = client.range('test-range', :a => "db/ident")
       resp.code.should == 200
-      resp.body.should be_a(Array)
+      resp.data.should be_a(Array)
     end
 
-    it "raises 400 without required attribute" do
-      expect { client.range('test-range') }.
-        to raise_error(RestClient::BadRequest, /400 Bad Request/)
+    it "returns 400 without required attribute" do
+      resp = client.range('test-range')
+      resp.code.should == 400
     end
   end
 
@@ -110,13 +110,13 @@ describe Datomic::Client do
     it "returns correct response" do
       resp = client.entity('test-entity', 1)
       resp.code.should == 200
-      resp.body.should be_a(Hash)
+      resp.data.should be_a(Hash)
     end
 
     it "returns correct response with valid param" do
       resp = client.entity('test-entity', 1, :since => 0)
       resp.code.should == 200
-      resp.body.should be_a(Hash)
+      resp.data.should be_a(Hash)
     end
   end
 
@@ -130,15 +130,15 @@ describe Datomic::Client do
     it "returns a correct response with a string query" do
       resp = client.query('test-query', '[:find ?c :where [?c :community/name]]')
       resp.code.should == 200
-      resp.body.should be_a(Array)
-      resp.body.should == [[1]]
+      resp.data.should be_a(Array)
+      resp.data.should == [[1]]
     end
 
     it "returns a correct response with limit param" do
       resp = client.query('test-query', '[:find ?c :where [?c :community/name]]', :limit => 0)
       resp.code.should == 200
-      resp.body.should be_a(Array)
-      resp.body.should == []
+      resp.data.should be_a(Array)
+      resp.data.should == []
     end
 
     it "returns a correct response with a data query" do
@@ -146,7 +146,7 @@ describe Datomic::Client do
                     [:find, EDN::Type::Symbol.new('?c'), :where,
                           [EDN::Type::Symbol.new('?c'), :"community/name"]])
       resp.code.should == 200
-      resp.body.should be_a(Array)
+      resp.data.should be_a(Array)
     end
 
   end
@@ -176,8 +176,8 @@ describe Datomic::Client do
     end
 
     it "returns a 503 for nonexistent db" do
-      expect { client.events('zzzz') }.
-        to raise_error(RestClient::ServiceUnavailable, /503 Service Unavailable/)
+      resp = client.events('zzzz')
+      resp.code.should == 503
     end
   end
 end
