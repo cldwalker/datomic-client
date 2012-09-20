@@ -4,8 +4,9 @@ require 'datomic/client'
 #   bin/rest 9000 socrates datomic:mem://
 describe Datomic::Client do
   let(:datomic_uri) { ENV['DATOMIC_URI'] || 'http://localhost:9000' }
+  let(:storage) { ENV['DATOMIC_STORAGE'] || 'socrates' }
   let(:client) do
-    Datomic::Client.new datomic_uri, ENV['DATOMIC_STORAGE'] || 'socrates'
+    Datomic::Client.new datomic_uri, storage
   end
   let(:schema) { File.read(File.expand_path('../fixtures/seattle-schema.dtm', __FILE__)) }
 
@@ -125,17 +126,18 @@ describe Datomic::Client do
   end
 
   describe "#query" do
+    let(:db_id) { 1 }
+
     before {
       client.create_database('test-query')
       client.transact('test-query', schema)
-      client.transact('test-query', [[:"db/add", 1, :"community/name", "Some Community"]])
+      client.transact('test-query', [{:"db/id" => db_id, :"community/name" => "Some Community"}])
     }
 
     it "returns a correct response with a string query" do
-      resp = client.query('test-query', '[:find ?c :where [?c :community/name]]')
+      resp = client.query('test-query', '[:find ?e :where [?e :community/name "Some Community"]]')
       resp.code.should == 200
       resp.data.should be_a(Array)
-      resp.data.should == [[1]]
     end
 
     it "returns a correct response with limit param" do
@@ -151,6 +153,19 @@ describe Datomic::Client do
                           [EDN::Type::Symbol.new('?c'), :"community/name"]])
       resp.code.should == 200
       resp.data.should be_a(Array)
+    end
+
+
+    it "returns a correct response with args" do
+      client.transact('test-query', [{:"db/id" => db_id, :"community/name" => "Some Community Again"}])
+      query = [:find, ~'?e', ~'?v', :where, [~'?e', :"community/name", ~'?v']]
+
+      resp_without_history = client.query('test-query', query)
+      resp_with_history = client.query('test-query', query,
+                                 :args => [{:"db/alias" => "#{storage}/test-query", :history => true}])
+      resp_with_history.code.should == 200
+      resp_with_history.data.should be_a(Array)
+      resp_with_history.data.count.should > resp_without_history.data.count
     end
 
   end
