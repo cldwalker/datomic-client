@@ -1,3 +1,7 @@
+## 0.4.0
+* query endpoint takes query arg first to match endpoint syntax
+* query endpoint can a user's args
+
 ## 0.3.0
 * Update to work for 0.8.3520 - makes breaking changes for previous APIs
 * Remove monitor method

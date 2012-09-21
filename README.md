@@ -56,7 +56,7 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 
 ## Credits
 
-* @crnixon for adding edn support
+* @crnixon for adding edn support and improving #query
 * @flyingmachine for starting this with me
 * @relevance for fridays to work on this
 
