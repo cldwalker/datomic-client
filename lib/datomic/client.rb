@@ -56,12 +56,10 @@ module Datomic
     # If the args_or_dbname is a String, it will be converted into one arg
     # pointing to that database.
     def query(query, args_or_dbname, params = {})
-      args = if args_or_dbname.is_a?(String)
-               [{:"db/alias" => [@storage, args_or_dbname].join('/')}]
-             else
-               args_or_dbname
-             end
       query = transmute_data(query)
+      args = args_or_dbname.is_a?(String) ?
+        [{:"db/alias" => [@storage, args_or_dbname].join('/')}] :
+        args_or_dbname
       args = transmute_data(args)
       get root_url("api/query"), params.merge(:q => query, :args => args)
     end
