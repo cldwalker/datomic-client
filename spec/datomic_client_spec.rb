@@ -134,40 +134,45 @@ describe Datomic::Client do
       client.transact('test-query', [{:"db/id" => db_id, :"community/name" => "Some Community"}])
     }
 
-    it "returns a correct response with a string query" do
-      resp = client.query('test-query', '[:find ?e :where [?e :community/name "Some Community"]]')
-      resp.code.should == 200
-      resp.data.should be_a(Array)
+    context "with a dbname passed in for args" do
+      it "returns a correct response with a string query" do
+        resp = client.query('[:find ?e :where [?e :community/name "Some Community"]]', 'test-query')
+        resp.code.should == 200
+        resp.data.should be_a(Array)
+      end
+
+      it "returns a correct response with limit param" do
+        resp = client.query('[:find ?c :where [?c :community/name]]', 'test-query', :limit => 0)
+        resp.code.should == 200
+        resp.data.should be_a(Array)
+        resp.data.should == []
+      end
+
+      it "returns a correct response with a data query" do
+        resp = client.query([:find, EDN::Type::Symbol.new('?c'), :where,
+                              [EDN::Type::Symbol.new('?c'), :"community/name"]],
+                      'test-query')
+        resp.code.should == 200
+        resp.data.should be_a(Array)
+      end
     end
 
-    it "returns a correct response with limit param" do
-      resp = client.query('test-query', '[:find ?c :where [?c :community/name]]', :limit => 0)
-      resp.code.should == 200
-      resp.data.should be_a(Array)
-      resp.data.should == []
+    context "with an array passed in for args" do
+      it "returns a correct response" do
+        client.transact('test-query', [{
+                            :"db/id" => db_id,
+                            :"community/name" => "Some Community Again"}])
+        query = [:find, ~'?e', ~'?v', :where, [~'?e', :"community/name", ~'?v']]
+
+        resp_without_history = client.query(query, 'test-query')
+        resp_with_history = client.query(query, [{
+                                             :"db/alias" => "#{storage}/test-query",
+                                             :history => true}])
+        resp_with_history.code.should == 200
+        resp_with_history.data.should be_a(Array)
+        resp_with_history.data.count.should > resp_without_history.data.count
+      end
     end
-
-    it "returns a correct response with a data query" do
-      resp = client.query('test-query',
-                    [:find, EDN::Type::Symbol.new('?c'), :where,
-                          [EDN::Type::Symbol.new('?c'), :"community/name"]])
-      resp.code.should == 200
-      resp.data.should be_a(Array)
-    end
-
-
-    it "returns a correct response with args" do
-      client.transact('test-query', [{:"db/id" => db_id, :"community/name" => "Some Community Again"}])
-      query = [:find, ~'?e', ~'?v', :where, [~'?e', :"community/name", ~'?v']]
-
-      resp_without_history = client.query('test-query', query)
-      resp_with_history = client.query('test-query', query,
-                                 :args => [{:"db/alias" => "#{storage}/test-query", :history => true}])
-      resp_with_history.code.should == 200
-      resp_with_history.data.should be_a(Array)
-      resp_with_history.data.count.should > resp_without_history.data.count
-    end
-
   end
 
   describe "#events" do
