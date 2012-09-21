@@ -53,9 +53,16 @@ module Datomic
     end
 
     # Query can be a ruby data structure or a string representing clojure data
-    def query(dbname, query, params = {})
+    # If the args_or_dbname is a String, it will be converted into one arg
+    # pointing to that database.
+    def query(query, args_or_dbname, params = {})
+      args = if args_or_dbname.is_a?(String)
+               [{:"db/alias" => [@storage, args_or_dbname].join('/')}]
+             else
+               args_or_dbname
+             end
       query = transmute_data(query)
-      args = [{:"db/alias" => [@storage, dbname].join('/')}].to_edn
+      args = transmute_data(args)
       get root_url("api/query"), params.merge(:q => query, :args => args)
     end
 
