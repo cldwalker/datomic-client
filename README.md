@@ -35,7 +35,7 @@ $ irb -rdatomic/client
 => ''
 
 # Most responses are in edn and thus can be accessed natively
->> resp = datomic.query(dbname, '[:find ?c :where [?c :community/name]]')
+>> resp = datomic.query('[:find ?c :where [?c :community/name]]', dbname)
 >> resp.data
 => [[1]]
 
@@ -65,3 +65,5 @@ Please report them [on github](http://github.com/cldwalker/datomic-client/issues
 * [API documentation](http://docs.datomic.com/rest.html) - Actual documentation now resides on root
   url of datomic endpoint
 * [Initial announcement](http://blog.datomic.com/2012/09/rest-api.html)
+* [Sinatra Example](https://github.com/crnixon/datomic-sinatra-wiki)  - Sinatra wiki that uses
+  datomic-client
