@@ -194,4 +194,10 @@ describe Datomic::Client do
       resp.code.should == 503
     end
   end
+
+  describe "#/" do
+    it "returns an object that can be used as a database alias input to #query" do
+      (client/'test').should == {:"db/alias" => "#{storage}/test"}
+    end
+  end
 end

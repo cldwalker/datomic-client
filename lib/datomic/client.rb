@@ -57,9 +57,7 @@ module Datomic
     # pointing to that database.
     def query(query, args_or_dbname, params = {})
       query = transmute_data(query)
-      args = args_or_dbname.is_a?(String) ?
-        [{:"db/alias" => [@storage, args_or_dbname].join('/')}] :
-        args_or_dbname
+      args = args_or_dbname.is_a?(String) ? [self/args_or_dbname] : args_or_dbname
       args = transmute_data(args)
       get root_url("api/query"), params.merge(:q => query, :args => args)
     end
@@ -72,6 +70,10 @@ module Datomic
         :url => root_url('events', @storage, dbname),
         :headers => {:accept => "text/event-stream"},
         :block_response => block, &HANDLE_RESPONSE)
+    end
+
+    def /(dbname)
+      {:"db/alias" => "#@storage/#{dbname}"}
     end
 
     private
