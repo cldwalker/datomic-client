@@ -1,3 +1,4 @@
 .gitignore
 Gemfile.lock
 pkg
+.bundle
