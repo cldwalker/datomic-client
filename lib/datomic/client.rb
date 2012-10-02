@@ -57,7 +57,7 @@ module Datomic
     # pointing to that database.
     def query(query, args_or_dbname, params = {})
       query = transmute_data(query)
-      args = args_or_dbname.is_a?(String) ? [self/args_or_dbname] : args_or_dbname
+      args = args_or_dbname.is_a?(String) ? [db_alias(args_or_dbname)] : args_or_dbname
       args = transmute_data(args)
       get root_url("api/query"), params.merge(:q => query, :args => args)
     end
@@ -72,7 +72,7 @@ module Datomic
         :block_response => block, &HANDLE_RESPONSE)
     end
 
-    def /(dbname)
+    def db_alias(dbname)
       {:"db/alias" => "#@storage/#{dbname}"}
     end
 

@@ -195,9 +195,9 @@ describe Datomic::Client do
     end
   end
 
-  describe "#/" do
+  describe "#db_alias" do
     it "returns an object that can be used as a database alias input to #query" do
-      (client/'test').should == {:"db/alias" => "#{storage}/test"}
+      client.db_alias('test').should == {:"db/alias" => "#{storage}/test"}
     end
   end
 end
