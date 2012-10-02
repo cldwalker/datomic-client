@@ -1,3 +1,7 @@
+## 0.4.1
+* Make #db_alias available
+* Upgrade edn
+
 ## 0.4.0
 * query endpoint takes query arg first to match endpoint syntax
 * query endpoint can a take user's args
