@@ -48,6 +48,16 @@ $ irb -rdatomic/client
 >> datomic.events(dbname) {|r| puts "Received: #{r.inspect}" }
 ```
 
+## Additional Options
+
+This gem uses the [rest-client gem](https://rubygems.org/gems/rest-client/versions/1.8.0) for its
+network connection. When creating a client, you can add a hash of options which will be
+passed to the underlying gem. These can be used to extend timeouts etc. e.g.
+```ruby
+>> datomic = Datomic::Client.new 'http://localhost:9000', 'socrates', read_timeout: 600, open_timeout: 10
+```
+
+
 ## Issues
 Please report them [on github](http://github.com/cldwalker/datomic-client/issues).
 
