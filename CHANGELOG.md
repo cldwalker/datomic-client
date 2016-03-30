@@ -1,3 +1,7 @@
+## 0.5.0
+* Make restclient gem options available (e.g. for timeouts)
+* weaken the version restrictinons in the gem file.
+
 ## 0.4.1
 * Make #db_alias available
 * Upgrade edn

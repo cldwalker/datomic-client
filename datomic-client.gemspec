@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'bundler'
   s.add_development_dependency 'rspec', '~> 2.11'
   s.add_development_dependency 'rake', '~> 0.9.2.2'
-  s.add_dependency 'rest-client', '~> 1.6.7'
+  # Breaking changes in rest-client 1.8.0 for us
+  s.add_dependency 'rest-client', '~> 1.6.7' 
   s.add_dependency 'edn', '~> 1.0.0'
 end

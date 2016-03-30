@@ -9,12 +9,16 @@ module Datomic
       Response.new body, response, request
     end
 
-    def initialize(url, storage = nil)
+    # rest_options is anything acceptable sa an argument to RestClient::Request.new()
+    def initialize(url, storage = nil, rest_options = {})
       @url = url
       @storage = storage
+      @rest_options = rest_options
     end
 
     def create_database(dbname)
+      #RestClient.post root_url('data', @storage) + "/", {"db-name" => dbname},
+      #  :content_type => 'application/x-www-form-urlencoded', &HANDLE_RESPONSE
       RestClient.post root_url('data', @storage) + "/", {"db-name" => dbname},
         :content_type => 'application/x-www-form-urlencoded', &HANDLE_RESPONSE
     end
@@ -29,9 +33,12 @@ module Datomic
     # Data can be a ruby data structure or a string representing clojure data
     def transact(dbname, data)
       data = transmute_data(data)
-      RestClient.post(db_url(dbname) + "/", {"tx-data" => data},
+      #RestClient.post(db_url(dbname) + "/", {"tx-data" => data},
+      #                :Accept => 'application/edn', &HANDLE_RESPONSE)
+      post(db_url(dbname) + "/", {"tx-data" => data},
                       :Accept => 'application/edn', &HANDLE_RESPONSE)
     end
+
 
     # This endpoint hits both datoms and index-range APIs.
     # params take any param in addition to following options:
@@ -66,7 +73,7 @@ module Datomic
     # response from event
     def events(dbname, &block)
       # can't use RestClient.get b/c of :block_response
-      RestClient::Request.execute(:method => :get,
+      execute(:method => :get,
         :url => root_url('events', @storage, dbname),
         :headers => {:accept => "text/event-stream"},
         :block_response => block, &HANDLE_RESPONSE)
@@ -76,12 +83,25 @@ module Datomic
       {:"db/alias" => "#@storage/#{dbname}"}
     end
 
-    private
+  private
+    # Execute a Rest operation with extra defaults
+    def execute( args, &block )
+      RestClient::Request.execute(@rest_options.merge(args), &block)
+    end
 
     def get(url, params = {})
-      RestClient.get(url, :params => params, :Accept => 'application/edn',
-                     &HANDLE_RESPONSE)
+      #RestClient.get(url, :params => params, :Accept => 'application/edn',
+      #               &HANDLE_RESPONSE)
+      execute(:method => :get, 
+                      :url => url, 
+                      headers: {:params => params, :Accept => 'application/edn'},
+                      &HANDLE_RESPONSE)
     end
+
+    def post(url, payload, headers={}, &block )
+      execute(:method => :post, :url => url, :payload => payload, :headers => headers, &block)
+    end
+
 
     def root_url(*parts)
       [@url].concat(parts).join('/')
